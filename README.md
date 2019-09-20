@@ -1,5 +1,9 @@
 # adapt-contrib-trickle
 
+##### This is a modified version of trickle which allows a trickle button to be displayed on optional blocks and articles. To achieve this behaviour the respective block/article must have the `_isOptional` property set to `true`, not just the components themselves.
+
+##### The remainder of this readme is taken from the original.
+
 **Trickle** is an *extension* bundled with the [Adapt framework](https://github.com/adaptlearning/adapt_framework).
 
 <img src="https://github.com/adaptlearning/documentation/blob/master/04_wiki_assets/plug-ins/images/trickle01.gif" alt="trickle in action">

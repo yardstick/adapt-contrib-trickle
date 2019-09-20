@@ -25,7 +25,7 @@ define([
         },
 
         setupPreRender: function() {
-
+            this.completionAttribute = this.model.get('_isOptional') ? '_trickleInview' : completionAttribute;
             this.setupButtonVisible();
             this.setupButtonEnabled();
         },
@@ -96,7 +96,7 @@ define([
                 "remove": this.onRemove
             });
 
-            this.listenTo(this.model, "change:"+completionAttribute, this.onCompletion);
+            this.listenTo(this.model, "change:" + this.completionAttribute, this.onCompletion);
         },
 
         debounceCheckAutoHide: function() {

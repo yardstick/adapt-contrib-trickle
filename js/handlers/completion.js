@@ -47,7 +47,9 @@ define([
         },
 
         onStepLock: function(view) {
-            var isModelComplete = view.model.get(completionAttribute);
+            this.completionAttribute = view.model.get('_isOptional') ? '_trickleInview' : completionAttribute;
+
+            var isModelComplete = view.model.get(this.completionAttribute);
 
             var trickle = Adapt.trickle.getModelConfig(view.model);
             if (!trickle._stepLocking._isCompletionRequired &&
@@ -80,8 +82,8 @@ define([
             this.isCompleted = false;
             this.isStepLocking = true;
             this.stepModel = view.model;
-
-            this.listenTo(this.stepModel, "change:"+completionAttribute, this.onCompletion);
+            
+            this.listenTo(this.stepModel, "change:"+this.completionAttribute, this.onCompletion);
         },
 
         onCompletion: function(model, value) {

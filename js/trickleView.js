@@ -28,7 +28,10 @@ define([
         },
 
         onPreRender: function(view) {
-            this.completionAttribute = Adapt.trickle.getCompletionAttribute();
+            this.completionAttribute = this.model.get('_isOptional') ? '_trickleInview' : Adapt.trickle.getCompletionAttribute();
+
+            if (this.completionAttribute === '_trickleInview') this.setupInView();
+
             if (!this.isElementEnabled()) return;
 
             Adapt.trigger("trickle:preRender", this);
@@ -44,7 +47,7 @@ define([
         isElementEnabled: function() {
             var trickle = Adapt.trickle.getModelConfig(this.model);
             if (!trickle) return false;
-
+            
             if (this.model.get(this.completionAttribute)) return false;
 
             var isArticleWithOnChildren = (this.model.get("_type") === "article" && trickle._onChildren);
@@ -58,6 +61,7 @@ define([
 
         onStepLock: function() {
             if (!this.isElementEnabled()) {
+                console.log(1);
                 this.continueToNext();
                 return;
             }
@@ -65,6 +69,7 @@ define([
             var trickle = Adapt.trickle.getModelConfig(this.model);
             var isSteplocking = (trickle._stepLocking && trickle._stepLocking._isEnabled);
             if (!isSteplocking) {
+                console.log(2);
                 this.continueToNext();
                 return;
             }
@@ -99,6 +104,31 @@ define([
             this.articleModel = null;
             this.$el = null;
             this.el = null;
+        },
+
+        setupInView: function(view) {
+            this.$el.on('inview', this.onInview.bind(this));
+        },
+
+        onInview: function(event, visible, visiblePartX, visiblePartY) {
+            if (!visible) return;
+
+            switch (visiblePartY) {
+                case 'top':
+                    this.hasSeenTop = true;
+                    break;
+                case 'bottom':
+                    this.hasSeenBottom = true;
+                    break;
+                case 'both':
+                    this.hasSeenTop = this.hasSeenBottom = true;
+            }
+
+            if (!this.hasSeenTop || !this.hasSeenBottom) return;
+
+            this.model.set('_trickleInview', true);
+
+            this.$el.off('inview', this.onInview.bind(this));
         }
 
     });
